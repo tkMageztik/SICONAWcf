@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using System.Threading;
+using BMT.SICONA.Util;
 
 namespace BMT.SICONA.Wcf
 {
-    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
-    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
-    public class Service1 : IService1
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "SICONAService" en el código, en svc y en el archivo de configuración.
+    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione SICONAService.svc o SICONAService.svc.cs en el Explorador de soluciones e inicie la depuración.
+    public class SICONAService : IService1
     {
         public string GetData(int value)
         {
@@ -29,5 +35,8 @@ namespace BMT.SICONA.Wcf
             }
             return composite;
         }
+
+        
+
     }
 }
