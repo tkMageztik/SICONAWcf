@@ -54,11 +54,17 @@ namespace BMT.SICONA.Wcf.App_Code
             System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
 #endif
                 Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.Puerto);
-
-                for (int i = 0; i < LIMIT; i++)
+                try
                 {
-                    Thread t = new Thread(() => Service(listener));
-                    t.Start();
+                    for (int i = 0; i < LIMIT; i++)
+                    {
+                        Thread t = new Thread(() => Service(listener));
+                        t.Start();
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Util.Util.LogProceso("Fuera del entorno..." + exc.Message);
                 }
             }
 
@@ -68,7 +74,21 @@ namespace BMT.SICONA.Wcf.App_Code
         {
             while (true)
             {
-                Socket soc = listener.AcceptSocket();
+
+                Socket soc = null;
+                try
+                {
+                    soc = listener.AcceptSocket();
+                }
+                catch (Exception exc)
+                {
+                    Util.Util.LogProceso("Fuera del entorno... 2" + exc.Message);
+                }
+
+                if (soc == null)
+                {
+                    continue;
+                }
 
                 Util.Util.LogProceso("Inicializando escucha desde socket con ip-puerto :" + soc.RemoteEndPoint);
 #if DEBUG
