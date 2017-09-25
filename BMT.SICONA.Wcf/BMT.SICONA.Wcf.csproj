@@ -95,6 +95,10 @@
       <Project>{C414F5DC-C276-448A-98A7-A76FD63966A4}</Project>
       <Name>BMT.SICONA.BL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BMT.SICONA.DA\BMT.SICONA.DA.csproj">
+      <Project>{701671AA-7C3D-4B70-975E-DFB4E674FA31}</Project>
+      <Name>BMT.SICONA.DA</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BMT.SICONA.Util\BMT.SICONA.Util.csproj">
       <Project>{d984e69c-417d-4f4b-936b-c6075f0f3b89}</Project>
       <Name>BMT.SICONA.Util</Name>

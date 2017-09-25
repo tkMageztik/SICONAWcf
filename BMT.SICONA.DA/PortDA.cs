@@ -11,15 +11,14 @@ using System.Threading.Tasks;
 
 namespace BMT.SICONA.DA
 {
-    public class CardDA
+    public class PortDA
     {
-        public List<CardsBE> GetAllCards()
+        public List<PortBE> GetAllPorts()
         {
             using (IDbConnection db = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["Postgres"].ConnectionString))
             {
-                return db.Query<CardsBE>("Select * From Cards").ToList();
+                return db.Query<PortBE>("Select * From Puertos").ToList();
             }
         }
-
     }
 }

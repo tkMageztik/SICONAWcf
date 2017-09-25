@@ -11,12 +11,15 @@ using BMT.SICONA.Util;
 using System.Text;
 using BMT.SICONA.BL;
 using BMT.SICONA.BE;
+using BMT.SICONA.DA;
 
 namespace BMT.SICONA.Wcf.App_Code
 {
     public class Initializer
     {
-        private static List<CardsBE> cards { set; get; }
+        private static List<CardsBE> Cards { set; get; }
+        private static int InitialLenght { set; get; }
+        private static int FinalLenght { set; get; }
 
         public static void AppInitialize()
         {
@@ -26,30 +29,31 @@ namespace BMT.SICONA.Wcf.App_Code
 #endif
             Util.Util.LogProceso("Inicializando Servicio de Escucha de Antenas");
 
-            cards = new CardsBL().GetAllCards();
+            Cards = new CardsBL().GetAllCards();
             new Initializer().StartListener();
         }
-        
+
         const int LIMIT = 1; //5 concurrent clients
         private void StartListener()
         {
-            List<int> puertos = new List<int>();
+            List<PortBE> puertos = new List<PortBE>();
 
-            puertos.Add(5494);
-            puertos.Add(5495);
-            puertos.Add(5496);
-            puertos.Add(5497);
+            puertos = new PortBL().GetAllPorts();
 
-            foreach (int puerto in puertos)
+            foreach (PortBE puerto in puertos)
             {
+
+                InitialLenght = Convert.ToInt32(ConfigurationManager.AppSettings["InitialLenght"]);
+                FinalLenght = Convert.ToInt32(ConfigurationManager.AppSettings["FinalLenght"]);
+
                 IPAddress localAddr = IPAddress.Parse(ConfigurationManager.AppSettings["ServerIP"]);
-                TcpListener listener = new TcpListener(localAddr, puerto);
+                TcpListener listener = new TcpListener(localAddr, Convert.ToInt32(puerto.Puerto));
                 listener.Start();
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto);
+            System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
 #endif
-                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto);
+                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.Puerto);
 
                 for (int i = 0; i < LIMIT; i++)
                 {
@@ -98,11 +102,23 @@ namespace BMT.SICONA.Wcf.App_Code
                                 bytes = s.Read(resp, 0, resp.Length);
                                 trama = Util.Util.ByteArrayToHexString(resp);
 
-                                cardID = trama.Substring(0, 36);
-                                if (cards.Exists(x => x.Id == cardID))
+
+                                cardID = trama.Substring(InitialLenght, FinalLenght);
+                                if (Cards.Exists(x => x.Id == cardID))
                                 {
                                     System.Diagnostics.Debug.WriteLine("EXISTE " + cardID);
                                     Util.Util.LogProceso("EXISTE " + cardID);
+
+
+                                    new PlotDA().InsertPlot(
+                                        new PlotBE()
+                                        {
+                                            id = "",
+                                            fecha = DateTime.Now,
+                                            ip_antena = soc.RemoteEndPoint.ToString(),
+                                            trama = cardID,
+                                            puerto = ""
+                                        });
                                 }
                                 else
                                 {

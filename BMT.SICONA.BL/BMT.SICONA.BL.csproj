@@ -41,7 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardsBL.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="PlotBL.cs" />
+    <Compile Include="PortBL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
