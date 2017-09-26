@@ -137,7 +137,6 @@ namespace BMT.SICONA.Wcf.App_Code
                                     System.Diagnostics.Debug.WriteLine("EXISTE    " + cardID);
                                     Util.Util.LogProceso("EXISTE    " + cardID);
 
-
                                     new PlotDA().InsertPlot(
                                         new PlotBE()
                                         {
