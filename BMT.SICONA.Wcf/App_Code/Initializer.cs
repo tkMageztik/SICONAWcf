@@ -109,59 +109,58 @@ namespace BMT.SICONA.Wcf.App_Code
 
                     NetworkStream s = new NetworkStream(soc);
                     StreamReader sr = new StreamReader(s);
+                    
+                    //while (true)
+                    //{
+                    //string name = sr.ReadLine();
 
+                    //bytes = s.Read(resp, 0, resp.Length);
+                    //memStream.Write(resp, 0, bytes);
 
-                    while (true)
+                    string trama = "";
+                    string cardID = "";
+                    string cabecera = "";
+                    IPEndPoint remoteIpEndPoint = soc.RemoteEndPoint as IPEndPoint;
+
+                    if (s.CanRead)
                     {
-                        //string name = sr.ReadLine();
-
-                        //bytes = s.Read(resp, 0, resp.Length);
-                        //memStream.Write(resp, 0, bytes);
-
-                        string trama = "";
-                        string cardID = "";
-                        string cabecera = "";
-                        IPEndPoint remoteIpEndPoint = soc.RemoteEndPoint as IPEndPoint;
-
-                        if (s.CanRead)
+                        do
                         {
-                            do
+                            bytes = s.Read(resp, 0, resp.Length);
+                            trama = Util.Util.ByteArrayToHexString(resp).Substring(0, 2000);
+                            cardID = trama.Substring(InitialLenght, FinalLenght);
+                            cabecera = trama.Substring(0, 36);
+
+                            if (Cards.Exists(x => x.codigo_rfid == cardID))
                             {
-                                bytes = s.Read(resp, 0, resp.Length);
-                                trama = Util.Util.ByteArrayToHexString(resp).Substring(0,2000);
-                                cardID = trama.Substring(InitialLenght, FinalLenght);
-                                cabecera = trama.Substring(0, 36);
+                                System.Diagnostics.Debug.WriteLine("EXISTE    " + cardID);
+                                Util.Util.LogProceso("EXISTE    " + cardID);
 
-                                if (Cards.Exists(x => x.codigo_rfid == cardID))
-                                {
-                                    System.Diagnostics.Debug.WriteLine("EXISTE    " + cardID);
-                                    Util.Util.LogProceso("EXISTE    " + cardID);
-
-                                    new PlotBL().InsertPlot(
-                                        new PlotBE()
-                                        {
-                                            id_trama = cardID,
-                                            cabecera = cabecera,
-                                            fecha = DateTime.Now,
-                                            ip_antena = remoteIpEndPoint.Address.ToString(),
-                                            trama = trama,
-                                            puerto = remoteIpEndPoint.Port.ToString()
-                                        });
-                                }
-                                else
-                                {
-                                    System.Diagnostics.Debug.WriteLine("NO EXISTE " + cardID);
-                                    Util.Util.LogProceso("NO EXISTE " + cardID);
-                                }
+                                new PlotBL().InsertPlot(
+                                    new PlotBE()
+                                    {
+                                        id_trama = cardID,
+                                        cabecera = cabecera,
+                                        fecha = DateTime.Now,
+                                        ip_antena = remoteIpEndPoint.Address.ToString(),
+                                        trama = trama,
+                                        puerto = remoteIpEndPoint.Port.ToString()
+                                    });
                             }
-                            while (s.DataAvailable);
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine("NO EXISTE " + cardID);
+                                Util.Util.LogProceso("NO EXISTE " + cardID);
+                            }
                         }
-
-                        //string trama = Util.Util.ByteArrayToHexString(resp);
-                        //System.Diagnostics.Debug.WriteLine(trama);
-                        if (trama == "" || trama == null) break;
-
+                        while (s.DataAvailable);
                     }
+
+                    //string trama = Util.Util.ByteArrayToHexString(resp);
+                    //System.Diagnostics.Debug.WriteLine(trama);
+                    if (trama == "" || trama == null) break;
+
+                    //}
                     s.Close();
                 }
                 catch (Exception e)
@@ -195,7 +194,7 @@ namespace BMT.SICONA.Wcf.App_Code
 
         //TODO: Usando substring
         private void CheckCardIDBySubstring() { }
-        
+
         private void test()
         {
             int i = 0;
