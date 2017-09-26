@@ -107,13 +107,13 @@ namespace BMT.SICONA.WinService
                 FinalLenght = Convert.ToInt32(ConfigurationManager.AppSettings["FinalLenght"]);
 
                 IPAddress localAddr = IPAddress.Parse(ConfigurationManager.AppSettings["ServerIP"]);
-                TcpListener listener = new TcpListener(localAddr, Convert.ToInt32(puerto.Puerto));
+                TcpListener listener = new TcpListener(localAddr, Convert.ToInt32(puerto.puerto));
                 listener.Start();
 
 #if DEBUG
-                System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
+                System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.puerto);
 #endif
-                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.Puerto);
+                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.puerto);
                 try
                 {
                     for (int i = 0; i < LIMIT; i++)
@@ -184,7 +184,7 @@ namespace BMT.SICONA.WinService
 
 
                                 cardID = trama.Substring(InitialLenght, FinalLenght);
-                                if (Cards.Exists(x => x.Id == cardID))
+                                if (Cards.Exists(x => x.codigo_rfid == cardID))
                                 {
                                     System.Diagnostics.Debug.WriteLine("EXISTE " + cardID);
                                     Util.Util.LogProceso("EXISTE " + cardID);
@@ -193,7 +193,7 @@ namespace BMT.SICONA.WinService
                                     new PlotBL().InsertPlot(
                                         new PlotBE()
                                         {
-                                            id = "",
+                                            id_trama = "",
                                             fecha = DateTime.Now,
                                             ip_antena = soc.RemoteEndPoint.ToString(),
                                             trama = cardID,

@@ -17,7 +17,7 @@ namespace BMT.SICONA.DA
         {
             using (IDbConnection db = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["Postgres"].ConnectionString))
             {
-                return db.Query<CardsBE>("Select * From Cards").ToList();
+                return db.Query<CardsBE>("select * from visitas.tarjetas").ToList();
             }
         }
 

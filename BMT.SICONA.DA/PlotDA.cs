@@ -17,7 +17,7 @@ namespace BMT.SICONA.DA
         {
             using (IDbConnection db = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["Postgres"].ConnectionString))
             {
-                string sqlQuery = "INSERT INTO Trama values (@id,@fecha,@puerto,@ip_antena,@trama,@procesado) ";
+                string sqlQuery = "INSERT INTO visitas.trama values (@id_trama,@cabecera,@fecha,@puerto,@ip_antena,@trama,@procesado) ";
 
                 int rowsAffected = db.Execute(sqlQuery, plotBE);
 

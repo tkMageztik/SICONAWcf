@@ -17,7 +17,7 @@ namespace BMT.SICONA.DA
         {
             using (IDbConnection db = new NpgsqlConnection(ConfigurationManager.ConnectionStrings["Postgres"].ConnectionString))
             {
-                return db.Query<PortBE>("Select * From Puertos").ToList();
+                return db.Query<PortBE>("Select * From visitas.puertos").ToList();
             }
         }
     }

@@ -8,11 +8,12 @@ namespace BMT.SICONA.BE
 {
     public class PlotBE
     {
-        public string id { get; set; }
-        public DateTime fecha { set; get; }
-        public string puerto { set; get; }
-        public string ip_antena { set; get; }
-        public string trama { set; get; }
+        public string id_trama { get; set; }
+        public string cabecera { get; set; }
+        public DateTime fecha { get; set; }
+        public string puerto { get; set; }
+        public string ip_antena { get; set; }
+        public string trama { get; set; }
         public bool procesado { get { return false; } }
     }
 }

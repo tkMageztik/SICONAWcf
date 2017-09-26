@@ -8,7 +8,7 @@ namespace BMT.SICONA.BE
 {
     public class PortBE
     {
-        public string Id { get; set; }
-        public string Puerto { get; set; }
+        public string id_puertos { get; set; }
+        public string puerto { get; set; }
     }
 }
