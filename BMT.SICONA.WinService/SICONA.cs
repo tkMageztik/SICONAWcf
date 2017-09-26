@@ -1,25 +1,67 @@
-﻿using System;
+﻿using BMT.SICONA.BE;
+using BMT.SICONA.BL;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Web;
-using BMT.SICONA.Util;
+using System.ServiceProcess;
 using System.Text;
-using BMT.SICONA.BL;
-using BMT.SICONA.BE;
-using BMT.SICONA.DA;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 
-namespace BMT.SICONA.Wcf.App_Code
+namespace BMT.SICONA.WinService
 {
-    public class Initializer
+    public partial class SICONA : ServiceBase
     {
+        private System.Timers.Timer timer = null;
+
         private static List<CardsBE> Cards { set; get; }
         private static int InitialLenght { set; get; }
         private static int FinalLenght { set; get; }
+
+        public SICONA()
+        {
+            InitializeComponent();
+            double intervalo = Convert.ToDouble(ConfigurationManager.AppSettings["IntervaloTiempo"]);
+
+            try
+            {
+                timer = new System.Timers.Timer(intervalo);
+                timer.Elapsed += new ElapsedEventHandler(this.ServiceTimer_Tick);
+
+                //testIBS();
+                //RegistrarCoincidenciaCliente();
+                //BLLog.FlatLog(" Se Ejecutó RegistrarCoincidenciaCliente()");
+                //EnviarCorreosTransacciones();
+                //BLLog.FlatLog(" Se Ejecutó EnviarCorreosTransacciones()");
+
+                //BLLog.FlatLog(" Termina Inicialización de Servicio ");
+            }
+            catch (Exception ex)
+            {
+                //BLLog.FlatLog("  Excepción.WinServiceDE.Inicialización " + ex.Message);
+            }
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            timer.Start();
+        }
+
+        protected override void OnStop()
+        {
+            timer.AutoReset = false;
+            timer.Enabled = false;
+        }
 
         public static void AppInitialize()
         {
@@ -30,93 +72,25 @@ namespace BMT.SICONA.Wcf.App_Code
             Util.Util.LogProceso("Inicializando Servicio de Escucha de Antenas");
 
             Cards = new CardsBL().GetAllCards();
-            new Initializer().StartListener();
+            new SICONA().StartListener();
             //new Initializer().StartListener_2();
         }
 
-        private void test()
+        private void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            int i = 0;
-
-            while (true)
+            try
             {
-
-                Util.Util.LogProceso("1");
-#if DEBUG
-            //System.Diagnostics.Debug.WriteLine("Inicializando escucha desde socket con ip-puerto :");
-#endif
-                try
-                {
-
-
-                    while (true)
-                    {
-
-                        if (i % 2 != 0)
-                        {
-
-                            int x = Convert.ToInt32("A");
-                        }
-
-                        i++;
-
-                        Util.Util.LogProceso("2");
-                    }
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    System.Diagnostics.Debug.WriteLine("ERROR: "+ e.Message);
-#endif
-
-                    Util.Util.LogProceso("ERROR: " + e.Message);
-                }
-                finally
-                {
-#if DEBUG
-                    System.Diagnostics.Debug.WriteLine("Disconnected: ");
-#endif
-
-                }
+                timer.Enabled = true;
+                this.timer.Start();
+                //RegistrarCoincidenciaCliente();
+                //BLLog.FlatLog(" Se Ejecutó RegistrarCoincidenciaCliente()");
+                //EnviarCorreosTransacciones();
+                //BLLog.FlatLog(" Se Ejecutó EnviarCorreosTransacciones()");
             }
-
-        }
-
-
-        private void StartListener_2()
-        {
-            List<PortBE> puertos = new List<PortBE>();
-
-            puertos.Add(new PortBE() { Id = "", Puerto = "" });
-            puertos.Add(new PortBE() { Id = "", Puerto = "" });
-            puertos.Add(new PortBE() { Id = "", Puerto = "" });
-            puertos.Add(new PortBE() { Id = "", Puerto = "" });
-
-            foreach (PortBE puerto in puertos)
+            catch (Exception ex)
             {
-
-                InitialLenght = Convert.ToInt32(ConfigurationManager.AppSettings["InitialLenght"]);
-                FinalLenght = Convert.ToInt32(ConfigurationManager.AppSettings["FinalLenght"]);
-
-
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
-#endif
-                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.Puerto);
-                try
-                {
-                    for (int i = 0; i < LIMIT; i++)
-                    {
-                        Thread t = new Thread(() => test());
-                        t.Start();
-                    }
-                }
-                catch (Exception exc)
-                {
-                    Util.Util.LogProceso("Fuera del entorno..." + exc.Message);
-                }
+                //BLLog.FlatLog(" Excepción ServiceTimer_Tick" + ex.Message.Trim());
             }
-
         }
 
         const int LIMIT = 1; //5 concurrent clients
@@ -137,7 +111,7 @@ namespace BMT.SICONA.Wcf.App_Code
                 listener.Start();
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
+                System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.Puerto);
 #endif
                 Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.Puerto);
                 try
@@ -178,7 +152,7 @@ namespace BMT.SICONA.Wcf.App_Code
 
                 Util.Util.LogProceso("Inicializando escucha desde socket con ip-puerto :" + soc.RemoteEndPoint);
 #if DEBUG
-            //System.Diagnostics.Debug.WriteLine("Inicializando escucha desde socket con ip-puerto :" + soc.RemoteEndPoint);
+                //System.Diagnostics.Debug.WriteLine("Inicializando escucha desde socket con ip-puerto :" + soc.RemoteEndPoint);
 #endif
                 try
                 {
@@ -216,7 +190,7 @@ namespace BMT.SICONA.Wcf.App_Code
                                     Util.Util.LogProceso("EXISTE " + cardID);
 
 
-                                    new PlotDA().InsertPlot(
+                                    new PlotBL().InsertPlot(
                                         new PlotBE()
                                         {
                                             id = "",
@@ -246,7 +220,7 @@ namespace BMT.SICONA.Wcf.App_Code
                 catch (Exception e)
                 {
 #if DEBUG
-                    System.Diagnostics.Debug.WriteLine("ERROR: "+ e.Message);
+                    System.Diagnostics.Debug.WriteLine("ERROR: " + e.Message);
 #endif
 
                     Util.Util.LogProceso("ERROR: " + e.Message);
@@ -277,6 +251,5 @@ namespace BMT.SICONA.Wcf.App_Code
 
         //TODO: Usando substring
         private void CheckCardIDBySubstring() { }
-
     }
 }

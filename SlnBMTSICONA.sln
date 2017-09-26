@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMT.SICONA.BE", "BMT.SICONA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMT.SICONA.BL", "BMT.SICONA.BL\BMT.SICONA.BL.csproj", "{C414F5DC-C276-448A-98A7-A76FD63966A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMT.SICONA.WinService", "BMT.SICONA.WinService\BMT.SICONA.WinService.csproj", "{653C7A2D-F315-4D08-A4F6-02CA58A75D14}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WinServiceSICONAX", "WinServiceSICONAX\WinServiceSICONAX.vdproj", "{FFA9F6D4-365C-4167-8092-3605C308029E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,12 @@ Global
 		{C414F5DC-C276-448A-98A7-A76FD63966A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C414F5DC-C276-448A-98A7-A76FD63966A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C414F5DC-C276-448A-98A7-A76FD63966A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{653C7A2D-F315-4D08-A4F6-02CA58A75D14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{653C7A2D-F315-4D08-A4F6-02CA58A75D14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{653C7A2D-F315-4D08-A4F6-02CA58A75D14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{653C7A2D-F315-4D08-A4F6-02CA58A75D14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFA9F6D4-365C-4167-8092-3605C308029E}.Debug|Any CPU.ActiveCfg = Debug
+		{FFA9F6D4-365C-4167-8092-3605C308029E}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
