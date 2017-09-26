@@ -82,7 +82,7 @@ namespace BMT.SICONA.WinService
             {
                 timer.Enabled = true;
                 this.timer.Start();
-                //RegistrarCoincidenciaCliente();
+                // RegistrarCoincidenciaCliente();
                 //BLLog.FlatLog(" Se Ejecutó RegistrarCoincidenciaCliente()");
                 //EnviarCorreosTransacciones();
                 //BLLog.FlatLog(" Se Ejecutó EnviarCorreosTransacciones()");

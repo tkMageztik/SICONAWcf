@@ -264,9 +264,6 @@ namespace BMT.SICONA.Wcf.App_Code
                 //#endif
                 //                soc.Close();
             }
-
-
-
         }
 
         //TODO: Usando contains (safe method)
