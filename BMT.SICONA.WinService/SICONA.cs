@@ -36,17 +36,13 @@ namespace BMT.SICONA.WinService
                 timer = new System.Timers.Timer(intervalo);
                 timer.Elapsed += new ElapsedEventHandler(this.ServiceTimer_Tick);
 
-                //testIBS();
-                //RegistrarCoincidenciaCliente();
-                //BLLog.FlatLog(" Se Ejecutó RegistrarCoincidenciaCliente()");
-                //EnviarCorreosTransacciones();
-                //BLLog.FlatLog(" Se Ejecutó EnviarCorreosTransacciones()");
-
-                //BLLog.FlatLog(" Termina Inicialización de Servicio ");
+                AppInitialize();
+                Util.Util.LogProceso(" Se Ejecutó AppInitialize()");
+                Util.Util.LogProceso(" Termina Inicialización de Servicio ");
             }
             catch (Exception ex)
             {
-                //BLLog.FlatLog("  Excepción.WinServiceDE.Inicialización " + ex.Message);
+                Util.Util.LogProceso("  Excepción.WinServiceDE.Inicialización " + ex.Message);
             }
         }
 
@@ -63,25 +59,14 @@ namespace BMT.SICONA.WinService
             timer.Enabled = false;
         }
 
-        public static void AppInitialize()
-        {
-            // This will get called on startup
-#if DEBUG
-            System.Diagnostics.Debug.WriteLine("Inicializando Servicio de Escucha de Antenas");
-#endif
-            Util.Util.LogProceso("Inicializando Servicio de Escucha de Antenas");
-
-            Cards = new CardsBL().GetAllCards();
-            new SICONA().StartListener();
-            //new Initializer().StartListener_2();
-        }
-
         private void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             try
             {
                 timer.Enabled = true;
                 this.timer.Start();
+                //revisar si socket se encuentra abierto.
+
                 // RegistrarCoincidenciaCliente();
                 //BLLog.FlatLog(" Se Ejecutó RegistrarCoincidenciaCliente()");
                 //EnviarCorreosTransacciones();
@@ -93,7 +78,20 @@ namespace BMT.SICONA.WinService
             }
         }
 
+        public static void AppInitialize()
+        {
+            // This will get called on startup
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("Inicializando Servicio de Escucha de Antenas");
+#endif
+            Util.Util.LogProceso("Inicializando Servicio de Escucha de Antenas");
+
+            Cards = new CardsBL().GetAllCards();
+            new SICONA().StartListener();
+        }
+
         const int LIMIT = 1; //5 concurrent clients
+
         private void StartListener()
         {
             List<PortBE> puertos = new List<PortBE>();
@@ -113,7 +111,7 @@ namespace BMT.SICONA.WinService
 #if DEBUG
                 System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.puerto);
 #endif
-                Util.Util.LogProceso("Inicializando escucha desde puerto :" + puerto.puerto);
+                Util.Util.LogProceso("Inicializando escucha desde puerto: " + puerto.puerto);
                 try
                 {
                     for (int i = 0; i < LIMIT; i++)
@@ -124,7 +122,12 @@ namespace BMT.SICONA.WinService
                 }
                 catch (Exception exc)
                 {
-                    Util.Util.LogProceso("Fuera del entorno..." + exc.Message);
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine("Inicializando escucha desde puerto :" + puerto.puerto);
+#endif
+
+                    Util.Util.LogProceso("Excepción en StartListener: " + exc.Message);
+
                 }
             }
 
@@ -142,7 +145,7 @@ namespace BMT.SICONA.WinService
                 }
                 catch (Exception exc)
                 {
-                    Util.Util.LogProceso("Fuera del entorno... 2" + exc.Message);
+                    Util.Util.LogProceso("Excepción en Service: " + exc.Message);
                 }
 
                 if (soc == null)
@@ -174,30 +177,32 @@ namespace BMT.SICONA.WinService
 
                         string trama = "";
                         string cardID = "";
+                        string cabecera = "";
+                        IPEndPoint remoteIpEndPoint = soc.RemoteEndPoint as IPEndPoint;
 
                         if (s.CanRead)
                         {
                             do
                             {
                                 bytes = s.Read(resp, 0, resp.Length);
-                                trama = Util.Util.ByteArrayToHexString(resp);
-
-
+                                trama = Util.Util.ByteArrayToHexString(resp).Substring(0, 2000);
                                 cardID = trama.Substring(InitialLenght, FinalLenght);
+                                cabecera = trama.Substring(0, 36);
+
                                 if (Cards.Exists(x => x.codigo_rfid == cardID))
                                 {
-                                    System.Diagnostics.Debug.WriteLine("EXISTE " + cardID);
-                                    Util.Util.LogProceso("EXISTE " + cardID);
-
+                                    System.Diagnostics.Debug.WriteLine("EXISTE    " + cardID);
+                                    Util.Util.LogProceso("EXISTE    " + cardID);
 
                                     new PlotBL().InsertPlot(
                                         new PlotBE()
                                         {
-                                            id_trama = "",
+                                            id_trama = cardID,
+                                            cabecera = cabecera,
                                             fecha = DateTime.Now,
-                                            ip_antena = soc.RemoteEndPoint.ToString(),
-                                            trama = cardID,
-                                            puerto = ""
+                                            ip_antena = remoteIpEndPoint.Address.ToString(),
+                                            trama = trama,
+                                            puerto = remoteIpEndPoint.Port.ToString()
                                         });
                                 }
                                 else
@@ -210,8 +215,7 @@ namespace BMT.SICONA.WinService
                         }
 
                         //string trama = Util.Util.ByteArrayToHexString(resp);
-
-                        System.Diagnostics.Debug.WriteLine(trama);
+                        //System.Diagnostics.Debug.WriteLine(trama);
                         if (trama == "" || trama == null) break;
 
                     }
@@ -238,18 +242,8 @@ namespace BMT.SICONA.WinService
                 //#endif
                 //                soc.Close();
             }
-
-
-
         }
 
-        //TODO: Usando contains (safe method)
-        private void CheckCardIDByContains()
-        {
 
-        }
-
-        //TODO: Usando substring
-        private void CheckCardIDBySubstring() { }
     }
 }
