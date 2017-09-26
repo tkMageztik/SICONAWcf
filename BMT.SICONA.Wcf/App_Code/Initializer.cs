@@ -158,7 +158,7 @@ namespace BMT.SICONA.Wcf.App_Code
 
                     //string trama = Util.Util.ByteArrayToHexString(resp);
                     //System.Diagnostics.Debug.WriteLine(trama);
-                    if (trama == "" || trama == null) break;
+                    //if (trama == "" || trama == null) break;
 
                     //}
                     s.Close();
